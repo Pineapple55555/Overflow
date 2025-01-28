@@ -69,6 +69,29 @@ export class Game {
         }
     }
 
+    pickupChecker() {
+        if (!this.binaryGroup) {
+            console.warn("binaryGroup is not initialized yet.");
+            return; // Exit early if binaryGroup is undefined
+        }
+    
+        const headPosition = this.head.getBall().position; // Get the head's position
+    
+        // Loop through all cubes in the group
+        this.binaryGroup.children.forEach((cube) => {
+            const cubePosition = cube.position;
+    
+            // Check if the head's position matches the cube's position
+            if (headPosition.x === cubePosition.x && headPosition.z === cubePosition.z) {
+                console.log("Head is touching a cube!");
+    
+                // Remove the cube from the group and scene
+                this.binaryGroup.remove(cube);
+                this.scene.remove(cube);
+            }
+        });
+    }
+
     animate(time) {
         requestAnimationFrame((t) => this.animate(t));
 
@@ -76,8 +99,11 @@ export class Game {
         if (time - this.lastUpdateTime > 200) {
             this.head.move(this.gridSize, this.gridStep);
             this.tail.update(this.head.getBall().position);
+            this.pickupChecker();
             this.lastUpdateTime = time;
         }
+
+        
 
         this.renderer.render(this.scene, this.camera.getCamera());
     }

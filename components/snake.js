@@ -1,3 +1,5 @@
+import { Binary } from './binaryBits.js'
+
 export class Snake {
     constructor() {
       // Snake Stuff Here
@@ -6,7 +8,6 @@ export class Snake {
         this.ball = new THREE.Mesh(ballGeometry, ballMaterial);
         this.ball.position.y = 0.3;
         this.direction = new THREE.Vector2(0, 0);
-        this.boundingBox = new THREE.Box3().setFromObject(this.ball);
       }
     
       getBall() {
@@ -28,8 +29,7 @@ export class Snake {
           -gridSize / 2 + 0.5,
           gridSize / 2 - 0.5
         );
+
       }
-      updateBoundingBox() {
-        this.boundingBox.setFromObject(this.sphere);
-      }
+  
   }

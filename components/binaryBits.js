@@ -27,6 +27,7 @@ export class Binary {
 
     // Create cubes based on positions
     const group = new THREE.Group();
+
     
     positions.forEach((pos, index) => {
       const cube = new Binary(pos.x - (gridSize / 2)+0.5, pos.y - (gridSize / 2)+0.5, 0);  // Adjust z if necessary

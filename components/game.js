@@ -18,13 +18,23 @@ export class Game {
         this.grid = new Grid(this.gridSize, this.squareSize);
         this.head = new Head();
         this.tail = new Tail();
-        this.binary = new Binary();
 
-        // Add objects to the scene
+        // Stock data for generating binary grid
+        const stockData = { price_usd: 0.002312, market_cap: 1234567 }; // Example stock data
+        const binary = new Binary();  // Binary object for generating cubes
+        this.binaryGroup = null;
+
+        // Generate the binary grid
+        binary.generateBinary(stockData, this.gridSize, 8)  // gridSize and bitCount
+            .then((group) => {
+                this.binaryGroup = group;  // Store the group of cubes
+                this.scene.add(this.binaryGroup);  // Add the group to the scene
+            });
+
+        // Add other objects to the scene
         this.scene.add(this.grid.getGroup());
         this.scene.add(this.head.getBall());
         this.scene.add(this.tail.getBall()); // Tail's first segment
-        this.binary.generateBinary()
 
         // Set up renderer
         this.renderer.setSize(window.innerWidth, window.innerHeight);
@@ -33,7 +43,6 @@ export class Game {
         // Keyboard input listener
         document.addEventListener('keydown', (event) => this.handleInput(event));
     }
-
 
     handleInput(event) {
         const key = event.key.toLowerCase();

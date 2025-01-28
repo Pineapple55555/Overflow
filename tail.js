@@ -1,12 +1,13 @@
 import { Snake } from '/components/snake.js';
 
 export class Tail extends Snake {
-    constructor() {
+    constructor(color) {
         super();
-        this.positions = []; // To keep track of previous positions of the head
 
-        // Customize the tail's appearance
-        this.ball.material.color.set(0x0000ff); // Set to blue for distinction
+        // Set the color based on the input
+        this.ball.material.color.set(color);
+
+        this.positions = []; // To keep track of previous positions of the head
     }
 
     update(headPosition) {

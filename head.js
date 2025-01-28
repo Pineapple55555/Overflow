@@ -4,7 +4,7 @@ export class Head extends Snake {
     constructor() {
         super();
         // Optionally, customize the head's appearance
-        this.ball.material.color.set(0xff0000); // Set to red for distinction
+        this.ball.material.color.set(0xffff00); // Set to red for distinction
     }
 
     move(gridSize, gridStep) {

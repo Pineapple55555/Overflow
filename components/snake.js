@@ -1,5 +1,3 @@
-import { Binary } from './binaryBits.js'
-
 export class Snake {
     constructor() {
       // Snake Stuff Here

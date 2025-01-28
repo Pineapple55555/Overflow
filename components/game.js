@@ -1,7 +1,7 @@
 import { Camera } from '/components/camera.js';
 import { Grid } from '/components/grid.js';
 import { Snake } from '/components/snake.js';
-
+import { Binary } from '/components/binaryBits.js';
 
 export class Game {
     constructor() {
@@ -16,11 +16,14 @@ export class Game {
           this.camera = new Camera(window.innerWidth, window.innerHeight);
           this.grid = new Grid(this.gridSize, this.squareSize);
           this.snake = new Snake();
-      
+          this.cube1 = new Binary(2,0.4,0,1);
           // Add objects to the scene
           this.scene.add(this.grid.getGroup());
           this.scene.add(this.snake.getBall());
-      
+          this.scene.add(this.cube1.getBinary());
+
+
+          
           // Set up renderer
           this.renderer.setSize(window.innerWidth, window.innerHeight);
           document.body.appendChild(this.renderer.domElement);
@@ -48,6 +51,7 @@ export class Game {
           // Update position at regular intervals
           if (time - this.lastUpdateTime > 200) {
             this.snake.move(this.gridSize, this.gridStep);
+            this.snake.updateBoundingBox();
             this.lastUpdateTime = time;
           }
       

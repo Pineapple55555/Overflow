@@ -1,11 +1,12 @@
 export class Snake {
     constructor() {
       // Snake Stuff Here
-    const ballGeometry = new THREE.SphereGeometry(0.5, 32, 32);
+        const ballGeometry = new THREE.SphereGeometry(0.5, 32, 32);
         const ballMaterial = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
         this.ball = new THREE.Mesh(ballGeometry, ballMaterial);
         this.ball.position.y = 0.3;
         this.direction = new THREE.Vector2(0, 0);
+        this.boundingBox = new THREE.Box3().setFromObject(this.ball);
       }
     
       getBall() {
@@ -27,5 +28,8 @@ export class Snake {
           -gridSize / 2 + 0.5,
           gridSize / 2 - 0.5
         );
+      }
+      updateBoundingBox() {
+        this.boundingBox.setFromObject(this.sphere);
       }
   }

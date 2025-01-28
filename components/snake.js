@@ -1,11 +1,12 @@
 export class Snake {
     constructor() {
       // Snake Stuff Here
-    const ballGeometry = new THREE.SphereGeometry(0.5, 32, 32);
+        const ballGeometry = new THREE.SphereGeometry(0.5, 32, 32);
         const ballMaterial = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
         this.ball = new THREE.Mesh(ballGeometry, ballMaterial);
         this.ball.position.y = 0.3;
         this.direction = new THREE.Vector2(0, 0);
+        this.tailSize = 0
       }
     
       getBall() {
@@ -28,4 +29,11 @@ export class Snake {
           gridSize / 2 - 0.5
         );
       }
+      addTail() {
+        
+      }
+      removeTail() {
+        
+      }
+  
   }

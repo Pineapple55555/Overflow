@@ -2,4 +2,4 @@
 import { Game } from '/components/game.js';
 // Main
 const game = new Game();
-game.start();
+game.animate(0);

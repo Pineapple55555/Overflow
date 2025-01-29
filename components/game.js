@@ -42,10 +42,19 @@ export class Game {
         document.addEventListener("keydown", (event) => this.handleInput(event));
     }
     
-    
+    gameManager() {
+        //generate a number from randomly choosing a number in a json file
+        getRandomLineFromJson('path/to/your/file.json').then(result => {
+            if (result) {
+                console.log('Random Line:', result.line);
+                console.log('Index:', result.index);
+            }
+        });
+        //display that number on the screen, where the user will work out which number it is
+        //when user is home, check binary 
+    }
 
     animate(time) {
-        console.log("Game is running...");
     
         requestAnimationFrame((t) => this.animate(t));
     
@@ -143,7 +152,19 @@ export class Game {
 
     handleInput(event) {
         const key = event.key.toLowerCase();
-
+    
+        // If the snake is at (0,0), allow movement again
+        if (this.head.onRedSquare) {
+            console.log("🏡 Leaving home, movement allowed again!");
+            this.head.onRedSquare = false;
+        }
+    
+        // Prevent reversing direction
+        if ((key === 'arrowup' || key === 'w') && this.head.direction.y === 1) return;
+        if ((key === 'arrowdown' || key === 's') && this.head.direction.y === -1) return;
+        if ((key === 'arrowleft' || key === 'a') && this.head.direction.x === 1) return;
+        if ((key === 'arrowright' || key === 'd') && this.head.direction.x === -1) return;
+    
         // Movement logic
         if (key === 'arrowup' || key === 'w') {
             this.head.setDirection(0, -1);
@@ -154,7 +175,7 @@ export class Game {
         } else if (key === 'arrowright' || key === 'd') {
             this.head.setDirection(1, 0);
         }
-
+    
         // Add tail segments with different types
         if (key === 'e') {
             this.addTailSegment(0); // Black (0)
@@ -163,18 +184,18 @@ export class Game {
         } else if (key === 't') {
             this.addTailSegment(2); // Grey ("none")
         }
-
+    
         // Remove the last tail segment
         if (key === 'q') {
             this.removeLastSegment();
         }
-
+    
         // Clear the entire tail
         if (key === 'x') {
             this.clearTail();
         }
     }
-
+    
     start() {
         console.log("Starting game...");
         this.animate(0);

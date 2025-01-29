@@ -21,7 +21,6 @@ export class DataHandler {
   
       // Hash the seed data once using Web Crypto API
       const hash = await this.generateHash(seedData);
-      console.log('Original Hash:', hash); // Log the original hash for reference
   
       const positions = new Set();
   
@@ -29,7 +28,6 @@ export class DataHandler {
       for (let i = 0; positions.size < this.bitCount * 2; i++) {
         const positionSeed = `${hash}-${i}`; // Combine the original hash with the position index
         const positionHash = await this.generateHash(positionSeed);
-        console.log(`Position Hash for index ${i}:`, positionHash); // Log each unique hash
   
         // Generate x and y coordinates based on parts of the position hash
         const x = parseInt(positionHash.slice(0, 4), 16) % this.gridSize; // Use the first 4 hex digits for x
@@ -45,4 +43,27 @@ export class DataHandler {
       });
     }
   }
+  
+  async function getRandomLineFromJson(fileUrl, min = 2) {
+    // Fetch the JSON file
+    return fetch(fileUrl)
+      .then(response => response.json())  // Parse the JSON data
+      .then(data => {
+        // Ensure the data is an array and contains at least 'min' entries
+        if (Array.isArray(data) && data.length >= min) {
+          // Generate a random index between min-1 and the length of the array
+          const randomIndex = Math.floor(Math.random() * (data.length - min + 1)) + min - 1;
+          
+          // Return the random line
+          return { index: randomIndex, line: data[randomIndex] };
+        } else {
+          throw new Error('JSON data is not an array or doesn’t contain enough entries.');
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+      });
+  }
+  
+  
   

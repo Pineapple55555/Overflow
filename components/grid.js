@@ -5,7 +5,7 @@ export class Grid {
       // ✅ Create (0,0) first with a separate material
       const homeGeometry = new THREE.PlaneGeometry(squareSize, squareSize);
       const homeMaterial = new THREE.MeshBasicMaterial({
-          color: 0xff0000, // 🔴 FORCE RED
+          color: 0xDA70D6, //  Purple
           side: THREE.DoubleSide,
       });
 

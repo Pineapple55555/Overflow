@@ -5,6 +5,8 @@ import { Tail } from '/components/tail.js';
 import { Binary } from '/components/binaryBits.js';
 
 export class Game {
+    active = false
+
     constructor() {
         this.scene = new THREE.Scene();
         this.renderer = new THREE.WebGLRenderer();
@@ -12,7 +14,7 @@ export class Game {
         this.squareSize = 1;
         this.gridStep = 1;
         this.lastUpdateTime = 0;
-    
+        
         // Set up camera and grid
         this.camera = new Camera(window.innerWidth, window.innerHeight);
         this.grid = new Grid(this.gridSize, this.squareSize);
@@ -145,6 +147,7 @@ export class Game {
                 console.log("Head is touching a cube!", cube.value);
                 this.snakeList.push(cube.value)
                 this.addTailSegment(cube.value)
+                this.end()
 
                 // Remove the cube from the group and scene
                 this.binaryGroup.remove(cube);
@@ -178,7 +181,8 @@ export class Game {
         } else if (key === 'arrowright' || key === 'd') {
             this.head.setDirection(1, 0);
         }
-    
+        
+        /* 
         // Add tail segments with different types
         if (key === 'e') {
             this.addTailSegment(0); // Black (0)
@@ -197,11 +201,17 @@ export class Game {
         if (key === 'x') {
             this.clearTail();
         }
+        */
     }
     
     start() {
         console.log("Starting game...");
         this.animate(0);
+        this.active = true
     }
     
+    end(){
+        this.active = false
+        console.log("game end")
+    }
 }

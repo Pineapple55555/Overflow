@@ -42,6 +42,7 @@ export class Snake {
                 this.onRedSquare = true;
                 if (this.game && typeof this.game.clearTail === "function") {
                     this.game.clearTail();  // Reset the tail
+                    this.tailSize = 0
                 }
                 this.direction.set(0, 0);  // Stop movement
             }
@@ -98,6 +99,7 @@ export class Snake {
     
     if (this.game && typeof this.game.clearTail === "function") {  
         this.game.clearTail();
+        this.tailSize = 0
     }
 
     this.resetGame();

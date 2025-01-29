@@ -1,8 +1,9 @@
 import { Snake } from '/components/snake.js';
 
 export class Head extends Snake {
-    constructor() {
-        super(0.5); // Head size (radius) is 0.5
+    constructor(game) {
+        super(0.5);
+        this.game = game;
 
         const textureLoader = new THREE.TextureLoader();
         textureLoader.load(

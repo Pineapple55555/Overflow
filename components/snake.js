@@ -1,5 +1,6 @@
 export class Snake {
     constructor(size = 0.5) {
+        this.previousPositions = [];   
         const ballGeometry = new THREE.SphereGeometry(size, 32, 32);
         const ballMaterial = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
         this.ball = new THREE.Mesh(ballGeometry, ballMaterial);
@@ -40,27 +41,53 @@ export class Snake {
   
       // After all checks, store the current position in previous positions for self-collision detection
       this.previousPositions.push({ x: this.ball.position.x, z: this.ball.position.z });
+
+        // Keep only tailSize number of positions
+        if (this.previousPositions.length > this.tailSize) {
+            this.previousPositions.shift();  // Remove oldest position
+}
+
+
+        // Keep only tailSize number of positions
+        if (this.previousPositions.length > this.tailSize) {
+            this.previousPositions.shift(); 
+        }
+
+        if (this.isCollidingWithItself(this.ball.position.x, this.ball.position.z)) {
+            console.log("Collision detected!");
+            this.death("collided with itself");
+            return;
+        }
+        console.log("Head Position:", this.ball.position.x, this.ball.position.z);
+        console.log("Tracked Tail Positions:", this.previousPositions);
+
   }
   
   // Helper function to check if the ball is colliding with itself
   isCollidingWithItself(x, z) {
-      // Assuming you are keeping track of previous positions in an array
-      for (let i = 0; i < this.previousPositions.length; i++) {
-          const pos = this.previousPositions[i];
-          // Check if the ball's current position matches any previous position
-          if (pos.x === x && pos.z === z) {
-              return true; // Collision with itself
-          }
-      }
-      return false; // No collision with itself
-  }
+    if (this.previousPositions.length === 0) return false;
+
+    // Ignore the last position (the head's current position)
+    for (let i = 0; i < this.previousPositions.length - 1; i++) {
+        if (this.previousPositions[i].x === x && this.previousPositions[i].z === z) {
+            return true;
+        }
+    }
+    return false;
+}
+
+
   
   // Handle death (trigger event, reset game, etc.)
   death(reason) {
-      console.log("Game Over! Reason: " + reason);
-      // You can reset the game state or trigger an end game event here.
-      this.resetGame();
-  }
+    console.log("Game Over! Reason: " + reason);
+    
+    if (this.game && typeof this.game.clearTail === "function") {  
+        this.game.clearTail();
+    }
+
+    this.resetGame();
+}
   
   // Example reset game function
   resetGame() {

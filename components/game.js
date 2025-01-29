@@ -12,98 +12,93 @@ export class Game {
         this.squareSize = 1;
         this.gridStep = 1;
         this.lastUpdateTime = 0;
-
-        // Set up camera, grid, head, and tail
+    
+        // Set up camera and grid
         this.camera = new Camera(window.innerWidth, window.innerHeight);
         this.grid = new Grid(this.gridSize, this.squareSize);
-        this.head = new Head();
-        this.tailSegments = []; // Array to hold tail segments
-        this.positionQueue = []; // Queue for storing head positions for the tail
-
-        // Stock data for generating binary grid
-        const stockData = { price_usd: 0.002312, market_cap: 1234567 }; // Example stock data
-        const binary = new Binary(); // Binary object for generating cubes
+        this.tailSegments = [];
+        this.positionQueue = [];
+    
+        // Generate binary grid
+        const stockData = { price_usd: 0.002312, market_cap: 1234567 };
+        this.binary = new Binary();
         this.binaryGroup = null;
-
-        // Generate the binary grid
-        binary.generateBinary(stockData, this.gridSize, 8) // gridSize and bitCount
-            .then((group) => {
-                this.binaryGroup = group; // Store the group of cubes
-                this.scene.add(this.binaryGroup); // Add the group to the scene
-            });
-
-        // Add objects to the scene
+        this.binary.generateBinary(stockData, this.gridSize, 8).then((group) => {
+            this.binaryGroup = group;
+            this.scene.add(this.binaryGroup);
+        });
+    
+        // Add objects to scene
         this.scene.add(this.grid.getGroup());
+    
+        this.head = new Head(this);  
         this.scene.add(this.head.getBall());
-
+    
         // Set up renderer
         this.renderer.setSize(window.innerWidth, window.innerHeight);
         document.body.appendChild(this.renderer.domElement);
-
-        // Keyboard input listener
-        document.addEventListener('keydown', (event) => this.handleInput(event));
+    
+        // Keyboard listener
+        document.addEventListener("keydown", (event) => this.handleInput(event));
     }
+    
+    
 
     animate(time) {
+        console.log("Game is running...");
+    
         requestAnimationFrame((t) => this.animate(t));
-
-        // Update position at regular intervals
+    
         if (time - this.lastUpdateTime > 200) {
-            const headPosition = this.head.getBall().position.clone(); // Save the current head position
-
-            // Move the head
+            const headPosition = this.head.getBall().position.clone();
             this.head.move(this.gridSize, this.gridStep);
-
-            // Add the head's previous position to the queue
             this.positionQueue.push(headPosition);
-
-            // Ensure the queue length matches the total number of tail segments
+    
             while (this.positionQueue.length > this.tailSegments.length) {
-                this.positionQueue.shift(); // Remove old positions
+                this.positionQueue.shift();
             }
-
-            // Update the tail segments
+    
             this.tailSegments.forEach((segment, index) => {
                 if (this.positionQueue[index]) {
                     segment.update(this.positionQueue[index]);
                 }
             });
-
-            this.pickupChecker(); // Check for pickups
-
+    
+            this.pickupChecker();
             this.lastUpdateTime = time;
         }
-
+    
         this.renderer.render(this.scene, this.camera.getCamera());
     }
+    
 
     addTailSegment(type) {
         let texturePath, baseColor;
-
-        // Assign base colors and textures based on the type
+    
         if (type === 0) {
-            texturePath = '/assets/0.png'; // Texture for "0"
-            baseColor = 0x000000; // Black for "0"
+            texturePath = "/assets/0.png";
+            baseColor = 0x000000;
         } else if (type === 1) {
-            texturePath = '/assets/1.png'; // Texture for "1"
-            baseColor = 0xffffff; // White for "1"
-        } else if (type === 2) {
-            texturePath = '/assets/blank.png'; // Texture for "none"
-            baseColor = 0x808080; // Grey for "none"
+            texturePath = "/assets/1.png";
+            baseColor = 0xffffff;
+        } else {
+            texturePath = "/assets/blank.png";
+            baseColor = 0x808080;
         }
-
+    
         const newTailSegment = new Tail(texturePath, baseColor);
-
-        // Position the new tail segment at the last segment or head
-        const referenceBall = this.tailSegments.length > 0
+        const referenceBall = this.tailSegments.length > 0 
             ? this.tailSegments[this.tailSegments.length - 1].getBall()
             : this.head.getBall();
-
+    
         newTailSegment.getBall().position.copy(referenceBall.position.clone());
-
         this.tailSegments.push(newTailSegment);
         this.scene.add(newTailSegment.getBall());
+    
+        this.head.tailSize++;
+        console.log("Tail Added! New Size:", this.head.tailSize);
     }
+    
 
     removeLastSegment() {
         if (this.tailSegments.length > 0) {
@@ -181,6 +176,8 @@ export class Game {
     }
 
     start() {
+        console.log("Starting game...");
         this.animate(0);
     }
+    
 }

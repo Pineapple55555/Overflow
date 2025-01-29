@@ -1,12 +1,14 @@
+// parent class for Head and Tail child classes
 export class Snake {
     constructor(size = 0.5) {
-        this.previousPositions = [];   
+        // physical ball setup
         const ballGeometry = new THREE.SphereGeometry(size, 32, 32);
         const ballMaterial = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
         this.ball = new THREE.Mesh(ballGeometry, ballMaterial);
         this.ball.position.y = 0.3;
         this.direction = new THREE.Vector2(0, 0);
-        this.tailSize = 0;
+        this.tailSize = 0; 
+        this.previousPositions = [];    // array for self collisions
     }
   
     getBall() {
@@ -72,8 +74,6 @@ export class Snake {
             }
         }
     }
-    
-    
     
   
   // Helper function to check if the ball is colliding with itself

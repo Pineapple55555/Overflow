@@ -18,6 +18,7 @@ export class Game {
         this.grid = new Grid(this.gridSize, this.squareSize);
         this.tailSegments = [];
         this.positionQueue = [];
+        this.snakeList = [];
     
         // Generate binary grid
         const stockData = { price_usd: 0.002312, market_cap: 1234567 };
@@ -141,7 +142,9 @@ export class Game {
 
             // Check if the head's position matches the cube's position
             if (headPosition.x === cubePosition.x && headPosition.z === cubePosition.z) {
-                console.log("Head is touching a cube!");
+                console.log("Head is touching a cube!", cube.value);
+                this.snakeList.push(cube.value)
+                this.addTailSegment(cube.value)
 
                 // Remove the cube from the group and scene
                 this.binaryGroup.remove(cube);

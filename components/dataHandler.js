@@ -44,6 +44,8 @@ export class DataHandler {
     }
   }
   
+
+  // other stuff
   async function getRandomLineFromJson(fileUrl, min = 2) {
     // Fetch the JSON file
     return fetch(fileUrl)

@@ -269,7 +269,8 @@ export class Game {
             this.isAlternateTheme = !this.isAlternateTheme;
             this.grid.toggleGridColors(this.isAlternateTheme)
             this.ui.updateFavicon(this.isAlternateTheme)
-            this.ui.updateSegments(this.snakeList, this.isAlternateTheme);
+            this.ui.updateSegments(this.snakeList, this.isAlternateTheme)
+            this.head.updateHeadAppearance(this.isAlternateTheme)
         }
         
     }

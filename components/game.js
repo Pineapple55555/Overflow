@@ -3,9 +3,13 @@ import { Grid } from '/components/grid.js';
 import { Head } from '/components/head.js';
 import { Tail } from '/components/tail.js';
 import { Binary } from '/components/binaryBits.js';
+import { Ui } from '/components/ui.js';
+
+
 
 export class Game {
     active = false
+    
 
     constructor() {
         this.scene = new THREE.Scene();
@@ -14,13 +18,18 @@ export class Game {
         this.squareSize = 1;
         this.gridStep = 1;
         this.lastUpdateTime = 0;
+        this.currentPoints = 0
         
         // Set up camera and grid
         this.camera = new Camera(window.innerWidth, window.innerHeight);
         this.grid = new Grid(this.gridSize, this.squareSize);
+        this.ui = new Ui()
+        this.ui.updateTargetNumber();
+        this.ui.updatePoints(this.currentPoints);
         this.tailSegments = [];
         this.positionQueue = [];
         this.snakeList = [];
+        this.currentBinary = null
     
         // Generate binary grid
         const stockData = { price_usd: 0.002312, market_cap: 1234567 };
@@ -43,8 +52,28 @@ export class Game {
     
         // Keyboard listener
         document.addEventListener("keydown", (event) => this.handleInput(event));
+
+        // Listen for collision events
+        this.head.addEventListener("homeCollision", (event) => {
+            //gets snake list, this.snakeList, and runs a check
+            this.checkBinary(this.snakeList)
+            this.snakeList = []
+
+        });
+
     }
     
+    checkBinary(userBinary) {
+        console.log("user",userBinary)
+        console.log("comparison",this.ui.currentBinary.split(''))
+
+        if (userBinary.length === this.ui.currentBinary.split('').length && userBinary.every((bit, index) => bit === this.ui.currentBinary.split('')[index])) {
+            console.log("Binary match!");
+        } else {
+            console.log("Binary mismatch.");
+        }
+    }
+
     gameManager() {
         //generate a number from randomly choosing a number in a json file
         getRandomLineFromJson('path/to/your/file.json').then(result => {
@@ -55,6 +84,7 @@ export class Game {
         });
         //display that number on the screen, where the user will work out which number it is
         //when user is home, check binary 
+
     }
 
     animate(time) {
@@ -205,6 +235,7 @@ export class Game {
     }
     
     start() {
+        
         console.log("Starting game...");
         this.animate(0);
         this.active = true

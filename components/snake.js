@@ -1,10 +1,12 @@
 // parent class for Head and Tail child classes
-export class Snake {
+export class Snake extends EventTarget{
     constructor(size = 0.5) {
+        super();
         // physical ball setup
         const ballGeometry = new THREE.SphereGeometry(size, 32, 32);
         const ballMaterial = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
         this.ball = new THREE.Mesh(ballGeometry, ballMaterial);
+    
         this.ball.position.y = 0.3;
         this.direction = new THREE.Vector2(0, 0);
         this.tailSize = 0; 
@@ -25,6 +27,7 @@ export class Snake {
         this.direction.set(x, y);
         console.log("New direction:", this.direction);
     }
+
   
     move(gridSize, gridStep) {
         // Store the original position before updating it
@@ -41,6 +44,7 @@ export class Snake {
                 console.log("🏡 Snake reached home! Resetting tail.");
                 this.onRedSquare = true;
                 if (this.game && typeof this.game.clearTail === "function") {
+                    this.dispatchEvent(new CustomEvent("homeCollision"));
                     this.game.clearTail();  // Reset the tail
                     this.tailSize = 0
                 }

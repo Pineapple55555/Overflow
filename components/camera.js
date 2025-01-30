@@ -6,7 +6,7 @@ export class Camera {
           0.1,
           1000
         );
-        this.camera.position.set(0, 13, 3); //0 13 0
+        this.camera.position.set(0, 13, 1); //0 13 0
         this.camera.lookAt(0, 0, 0);
       }
     

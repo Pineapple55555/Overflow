@@ -5,17 +5,32 @@ export class Binary {
   static defaultColor = 0x00ff00;
 
   constructor(x, y, z, value, text = "") {
-    const size = Binary.defaultSize;
-    const color = Binary.defaultColor;
 
-    const geometry = new THREE.BoxGeometry(size, size, size);
-    const materialArray = [];
+    const textureLoader = new THREE.TextureLoader();
+        textureLoader.load(
+            '/assets/head.png',
+            (texture) => {
+                texture.magFilter = THREE.NearestFilter;
+                texture.minFilter = THREE.NearestFilter;
+
+                this.ball.material = new THREE.MeshBasicMaterial({
+                    map: texture,
+                    transparent: true, // Support transparency
+                });
+
+                this.ball.material.needsUpdate = true;
+            },
+            undefined,
+            () => {
+                console.error("Failed to load head texture!");
+            }
+        );
     
-    for (let i = 0; i < 6; i++) { 
-      materialArray.push(new THREE.MeshBasicMaterial({ color }));
-    }
-
-    this.cube = new THREE.Mesh(geometry, materialArray);
+    const size = Binary.defaultSize*0.5;
+    const color = Binary.defaultColor;
+    const ballGeometry = new THREE.SphereGeometry(size, 32, 32);
+    const ballMaterial = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+    this.cube = new THREE.Mesh(ballGeometry, ballMaterial);
     this.cube.position.set(x,z,y);
     this.cube.value = value
 

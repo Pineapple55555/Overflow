@@ -113,6 +113,10 @@ export class Snake extends EventTarget{
 
     this.resetSnake();
 
+    // event to reset points
+    const event = new CustomEvent("playerDied", { detail: { reason } });
+    document.dispatchEvent(event);
+
 }
   
   // Example reset game function

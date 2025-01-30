@@ -4,6 +4,7 @@ import { Head } from '/components/head.js';
 import { Tail } from '/components/tail.js';
 import { Binary } from '/components/binaryBits.js';
 import { Ui } from '/components/ui.js';
+import { Environment } from '/components/env.js';
 
 
 
@@ -33,6 +34,10 @@ export class Game {
         this.snakeList = [];
         this.currentBinary = null
         this.defaultStockData = { price_usd: 0.002312, market_cap: 1234567 };
+
+        //env setup
+        //this.environmentHandler = new Environment(this.scene, this.renderer, this.camera)
+        //this.environmentHandler.shaders()
     
         // Generate binary grid
         this.binary = new Binary();
@@ -70,6 +75,12 @@ export class Game {
             this.checkBinary(this.snakeList)
             this.snakeList = []
 
+        });
+        document.addEventListener("playerDied", (event) => {
+            console.log("Resetting score due to death. Reason:", event.detail.reason);
+            this.currentPoints = 0;
+            this.ui.updateTargetNumber();
+            this.ui.updatePoints(this.currentPoints);
         });
 
     }
@@ -139,6 +150,7 @@ export class Game {
     animate(time) {
     
         requestAnimationFrame((t) => this.animate(t));
+        //this.environmentHandler.animate()
     
         if (time - this.lastUpdateTime > 200) {
             const headPosition = this.head.getBall().position.clone();

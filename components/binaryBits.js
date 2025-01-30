@@ -6,9 +6,9 @@ export class Binary {
   static defaultColor1 = 0xffffff; // White for 1
 
   constructor(x, y, z, value) {
-    const width = Binary.defaultSize * 1.5;
-    const height = 0.2; // Flat
-    const depth = Binary.defaultSize * 1.5;
+    const width = Binary.defaultSize * 2;
+    const height = 0; // Flat
+    const depth = Binary.defaultSize * 2;
     
     const textureLoader = new THREE.TextureLoader();
     const texture = textureLoader.load(
@@ -52,4 +52,5 @@ export class Binary {
   static setDefaultSize(newSize) {
     Binary.defaultSize = newSize;
   }
+
 }

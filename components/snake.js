@@ -20,12 +20,10 @@ export class Snake extends EventTarget{
     setDirection(x, y) {
         // Prevent reversing direction
         if (this.direction.x === -x && this.direction.y === -y) {
-            console.log("Cannot reverse direction!");
             return;  // Block input if trying to reverse
         }
     
         this.direction.set(x, y);
-        console.log("New direction:", this.direction);
     }
 
   
@@ -40,19 +38,26 @@ export class Snake extends EventTarget{
     
         // Stop movement and reset tail if (0,0) is reached
         if (this.ball.position.x === 0 && this.ball.position.z === 0) {
-            if (!this.onRedSquare) {  // Prevent multiple resets
+            if (!this.onHomeSquare) {  // Prevent multiple resets
                 console.log("🏡 Snake reached home! Resetting tail.");
-                this.onRedSquare = true;
+                this.onHomeSquare = true;
                 if (this.game && typeof this.game.clearTail === "function") {
                     this.dispatchEvent(new CustomEvent("homeCollision"));
                     this.game.clearTail();  // Reset the tail
-                    this.tailSize = 0
+                    this.tailSize = 0;
                 }
                 this.direction.set(0, 0);  // Stop movement
             }
             return;
         } else {
-            this.onRedSquare = false;  // Allow movement again after leaving (0,0)
+            this.onHomeSquare = false;  // Allow movement again after leaving (0,0)
+        }
+    
+        // ✅ Check if tail size is too large
+        if (this.tailSize > 8) {
+            console.log("Overflow!");
+            this.death("overflow");
+            return;
         }
     
         // Check for wall collision (if position goes out of bounds)
@@ -64,7 +69,6 @@ export class Snake extends EventTarget{
     
         // ✅ Check for self-collision after moving
         if (this.isCollidingWithItself(this.ball.position.x, this.ball.position.z)) {
-            console.log("💀 Collision detected!");
             this.death("collided with itself");
             return;
         }
@@ -79,6 +83,7 @@ export class Snake extends EventTarget{
             }
         }
     }
+    
     
   
   // Helper function to check if the ball is colliding with itself

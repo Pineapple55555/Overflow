@@ -49,6 +49,18 @@ export class Game {
         // Set up renderer
         this.renderer.setSize(window.innerWidth, window.innerHeight);
         document.body.appendChild(this.renderer.domElement);
+
+        // window listener
+        /*
+        window.addEventListener('keydown', (event) => {
+            if (event.key === 'F12') {
+                setTimeout(() => {
+                    resizeScene();
+                }, 100); // Slight delay to allow DevTools to open
+            }
+        });
+        window.addEventListener('resize', resizeScene);
+        */
     
         // Keyboard listener
         document.addEventListener("keydown", (event) => this.handleInput(event));
@@ -62,19 +74,47 @@ export class Game {
         });
 
     }
-    
-    checkBinary(userBinary) {
-        console.log("user",userBinary)
-        console.log("comparison",this.ui.currentBinary.split(''))
 
-        if (userBinary.length === this.ui.currentBinary.split('').length && userBinary.map(String).every((bit, index) => bit === this.ui.currentBinary.split('')[index])) {
-            console.log("Binary match!");
-        } else {
-            console.log("Binary mismatch.");
-        }
+    /*
+    resizeScene() {
+        const width = window.innerWidth;
+        const height = window.innerHeight;
+
+        // Update camera aspect ratio and projection matrix
+        this.camera.getCamera().aspect = width / height;
+        this.camera.getCamera().updateProjectionMatrix();
+
+        // Update renderer size
+        this.renderer.setSize(width, height);
+        this.renderer.setPixelRatio(window.devicePixelRatio);
+    } */
+    
+checkBinary(userBinary) {
+    console.log("user", userBinary);
+    console.log("comparison", this.ui.currentBinary.split(''));
+
+    // ✅ Convert userBinary to a string and pad with leading 0s if needed
+    let paddedUserBinary = userBinary.map(String).join('').padStart(8, '0');
+
+    // ✅ Ensure the comparison binary is also 8 characters
+    let targetBinary = this.ui.currentBinary.padStart(8, '0').split('');
+
+    console.log("Padded user binary:", paddedUserBinary);
+    console.log("Target binary:", targetBinary);
+
+    // ✅ Compare the padded binary with the stored binary
+    if (paddedUserBinary.length === targetBinary.length &&
+        paddedUserBinary.split('').every((bit, index) => bit === targetBinary[index])) {
+        console.log("✅ Binary match!");
+    } else {
+        console.log("❌ Binary mismatch.");
     }
 
-    gameManager() {
+    this.ui.updateSegments(this.snakeList);
+}
+
+
+    pointsManager() {
         //generate a number from randomly choosing a number in a json file
         getRandomLineFromJson('path/to/your/file.json').then(result => {
             if (result) {
@@ -99,17 +139,14 @@ export class Game {
             while (this.positionQueue.length > this.tailSegments.length) {
                 this.positionQueue.shift();
             }
-    
             this.tailSegments.forEach((segment, index) => {
                 if (this.positionQueue[index]) {
                     segment.update(this.positionQueue[index]);
                 }
             });
-    
             this.pickupChecker();
             this.lastUpdateTime = time;
         }
-    
         this.renderer.render(this.scene, this.camera.getCamera());
     }
     
@@ -127,6 +164,8 @@ export class Game {
             texturePath = "/assets/blank.png";
             baseColor = 0x808080;
         }
+
+        this.ui.updateSegments(this.snakeList);
     
         const newTailSegment = new Tail(texturePath, baseColor);
         const referenceBall = this.tailSegments.length > 0 
@@ -138,7 +177,6 @@ export class Game {
         this.scene.add(newTailSegment.getBall());
     
         this.head.tailSize++;
-        console.log("Tail Added! New Size:", this.head.tailSize);
     }
     
 
@@ -157,6 +195,7 @@ export class Game {
     clearTail() {
         while (this.tailSegments.length > 0) {
             this.removeLastSegment();
+            this.ui.updateSegments(this.snakeList);
         }
     }
 
@@ -174,10 +213,15 @@ export class Game {
 
             // Check if the head's position matches the cube's position
             if (headPosition.x === cubePosition.x && headPosition.z === cubePosition.z) {
-                console.log("Head is touching a cube!", cube.value);
-                this.snakeList.push(cube.value)
-                this.addTailSegment(cube.value)
-                this.end()
+            
+                // Play munch sound
+                const munchSound = new Audio('/assets/munch.mp3');
+                munchSound.play();
+            
+                this.snakeList.push(cube.value);
+                this.addTailSegment(cube.value);
+                this.end();
+            
 
                 // Remove the cube from the group and scene
                 this.binaryGroup.remove(cube);
@@ -190,9 +234,9 @@ export class Game {
         const key = event.key.toLowerCase();
     
         // If the snake is at (0,0), allow movement again
-        if (this.head.onRedSquare) {
+        if (this.head.onHomeSquare) {
             console.log("🏡 Leaving home, movement allowed again!");
-            this.head.onRedSquare = false;
+            this.head.ye = false;
         }
     
         // Prevent reversing direction
@@ -212,26 +256,6 @@ export class Game {
             this.head.setDirection(1, 0);
         }
         
-        /* 
-        // Add tail segments with different types
-        if (key === 'e') {
-            this.addTailSegment(0); // Black (0)
-        } else if (key === 'r') {
-            this.addTailSegment(1); // White (1)
-        } else if (key === 't') {
-            this.addTailSegment(2); // Grey ("none")
-        }
-    
-        // Remove the last tail segment
-        if (key === 'q') {
-            this.removeLastSegment();
-        }
-    
-        // Clear the entire tail
-        if (key === 'x') {
-            this.clearTail();
-        }
-        */
     }
     
     start() {

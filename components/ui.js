@@ -25,7 +25,7 @@ export class Ui {
         // Check if binaryRepresentation is valid
         if (binaryRepresentation) {
         // Update the UI with the random number and binary representation
-            targetNumberElement.textContent = 'Number: ' + randomNumber + ' Binary: ' + binaryRepresentation.value;
+            targetNumberElement.textContent = 'Target: ' + randomNumber + ' Binary: ' + binaryRepresentation.value;
             this.currentBinary = binaryRepresentation.value
         } else {
         // If binary representation is not found
@@ -33,15 +33,31 @@ export class Ui {
         }
     }
 
+    async updateSegments(snakeList) {
+        const segmentsElement = document.getElementById('segments');
+    
+        // Convert array to a string (e.g., [1, 0, 1] → "101")
+        let segmentsString = snakeList.join('');
+    
+        // ✅ Ensure it is always 8 characters by padding "0"s at the front
+        let paddedZeros = '0'.repeat(8 - segmentsString.length);
+        
+        // ✅ Wrap padded 0s in a red `<span>`
+        let formattedString = `<span style="color:rgb(120, 134, 150);">${paddedZeros}</span>${segmentsString}`;
+    
+        // Update the UI with styled HTML
+        segmentsElement.innerHTML = formattedString;
+    }
+    
+    
+    
+
   
     // Function to fetch JSON and find the binary representation
     async getBinaryRepresentation(number) {
         try {
             const response = await fetch('/components/binary.json');
             const data = await response.json();
-
-            console.log("number", number);
-            console.log(response);
 
             // Check if the number is found in the JSON data
             if (data.hasOwnProperty(number)) {

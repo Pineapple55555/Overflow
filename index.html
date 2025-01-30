@@ -2,37 +2,54 @@
 <html lang="en">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
 <head>
+  <link rel="icon" type="image/png" href="/assets/favicon.png">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
   <title>Overflow</title>
   <style>
     body {
-      margin: 0;
-      overflow: hidden;
-    }
-    .ui-container {
-      height:7%;
-      width:100%;
-      position:absolute;
-      top:5px;
-      box-sizing:border-box;
-      text-align: center;
-      color: rgb(255, 255, 255);
-      font-size: 34px;
+  margin: 0;
+  overflow: hidden;
+  font-family: 'Press Start 2P', cursive; /* Apply globally */
+}
 
-    }
-    .points {
-      box-sizing: border-box;
-      top: 20px; /* Positioning 20px from the top */
-      right: 20px; /* Positioning 20px from the right */
-      height: 80px;
-      width: auto;
-      position: absolute;
-      text-align: center;
-      font-family: 'Times New Roman', Times, serif;
-      font-size: 55px;
-      color: beige;
-    }
+.ui-container {
+  height: 7%;
+  width: 100%;
+  position: absolute;
+  top: 5px;
+  box-sizing: border-box;
+  text-align: center;
+  color: beige;
+  font-size: 34px;
+}
+
+.points {
+  box-sizing: border-box;
+  bottom: 20px;
+  right: 20px;
+  height: 80px;
+  width: auto;
+  position: absolute;
+  text-align: center;
+  font-size: 24px;
+  color: #c6defa; 
+
+}
+
+.segments {
+  box-sizing: border-box;
+  bottom: 20px; /* Position it slightly above the points */
+  left: 20px;
+  height: 80px;
+  width: auto;
+  position: absolute;
+  text-align: center;
+  font-size: 24px;
+  color: #c6defa;
+}
+
 
   </style>
 </head>
@@ -42,6 +59,9 @@
   </div>
   <div class = "points">
     <span id = "points"> </span>
+  </div>
+  <div class="segments">
+    <span id="segments">Segments: 0</span>
   </div>
   </style>
 </head>

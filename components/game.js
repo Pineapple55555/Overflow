@@ -67,7 +67,7 @@ export class Game {
         console.log("user",userBinary)
         console.log("comparison",this.ui.currentBinary.split(''))
 
-        if (userBinary.length === this.ui.currentBinary.split('').length && userBinary.every((bit, index) => bit === this.ui.currentBinary.split('')[index])) {
+        if (userBinary.length === this.ui.currentBinary.split('').length && userBinary.map(String).every((bit, index) => bit === this.ui.currentBinary.split('')[index])) {
             console.log("Binary match!");
         } else {
             console.log("Binary mismatch.");

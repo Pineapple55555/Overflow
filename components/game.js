@@ -18,7 +18,9 @@ export class Game {
         this.squareSize = 1;
         this.gridStep = 1;
         this.lastUpdateTime = 0;
+        this.isAlternateTheme = false;
         this.currentPoints = 0
+        this.basePoints = 10
         
         // Set up camera and grid
         this.camera = new Camera(window.innerWidth, window.innerHeight);
@@ -30,16 +32,13 @@ export class Game {
         this.positionQueue = [];
         this.snakeList = [];
         this.currentBinary = null
+        this.defaultStockData = { price_usd: 0.002312, market_cap: 1234567 };
     
         // Generate binary grid
-        const stockData = { price_usd: 0.002312, market_cap: 1234567 };
         this.binary = new Binary();
         this.binaryGroup = null;
-        this.binary.generateBinary(stockData, this.gridSize, 8).then((group) => {
-            this.binaryGroup = group;
-            this.scene.add(this.binaryGroup);
-        });
-    
+        this.generateLevel()
+        
         // Add objects to scene
         this.scene.add(this.grid.getGroup());
     
@@ -74,7 +73,21 @@ export class Game {
         });
 
     }
-
+    clearLevel(){
+        while (this.binaryGroup.children.length > 0) {
+            const child = this.binaryGroup.children.pop();
+            this.binaryGroup.remove(child);
+            child.geometry.dispose();
+            child.material.dispose();
+        }
+    }
+    generateLevel() {
+        this.binary.generateBinary(this.defaultStockData, this.gridSize, 8).then((group) => {
+            this.binaryGroup = group;
+            this.scene.add(this.binaryGroup);
+        });
+        
+}
     /*
     resizeScene() {
         const width = window.innerWidth;
@@ -89,42 +102,38 @@ export class Game {
         this.renderer.setPixelRatio(window.devicePixelRatio);
     } */
     
-checkBinary(userBinary) {
-    console.log("user", userBinary);
-    console.log("comparison", this.ui.currentBinary.split(''));
+    checkBinary(userBinary) {
+        console.log("user", userBinary);
+        console.log("comparison", this.ui.currentBinary.split(''));
 
-    // ✅ Convert userBinary to a string and pad with leading 0s if needed
-    let paddedUserBinary = userBinary.map(String).join('').padStart(8, '0');
+        // ✅ Convert userBinary to a string and pad with leading 0s if needed
+        let paddedUserBinary = userBinary.map(String).join('').padStart(8, '0');
 
-    // ✅ Ensure the comparison binary is also 8 characters
-    let targetBinary = this.ui.currentBinary.padStart(8, '0').split('');
+        // ✅ Ensure the comparison binary is also 8 characters
+        let targetBinary = this.ui.currentBinary.padStart(8, '0').split('');
 
-    console.log("Padded user binary:", paddedUserBinary);
-    console.log("Target binary:", targetBinary);
+        console.log("Padded user binary:", paddedUserBinary);
+        console.log("Target binary:", targetBinary);
 
-    // ✅ Compare the padded binary with the stored binary
-    if (paddedUserBinary.length === targetBinary.length &&
-        paddedUserBinary.split('').every((bit, index) => bit === targetBinary[index])) {
-        console.log("✅ Binary match!");
-    } else {
-        console.log("❌ Binary mismatch.");
+        // ✅ Compare the padded binary with the stored binary
+        if (paddedUserBinary.length === targetBinary.length &&
+            paddedUserBinary.split('').every((bit, index) => bit === targetBinary[index])) {
+            console.log("✅ Binary match!");
+            this.pointsManager()
+            this.end();
+        } else {
+            console.log("❌ Binary mismatch.");
+        }
+        this.end();
     }
-
-    this.ui.updateSegments(this.snakeList);
-}
 
 
     pointsManager() {
-        //generate a number from randomly choosing a number in a json file
-        getRandomLineFromJson('path/to/your/file.json').then(result => {
-            if (result) {
-                console.log('Random Line:', result.line);
-                console.log('Index:', result.index);
-            }
-        });
-        //display that number on the screen, where the user will work out which number it is
-        //when user is home, check binary 
-
+        //adds points and updates anything that needs updating
+        console.log("adds points");
+        this.currentPoints += this.basePoints
+        this.ui.updateTargetNumber();
+        this.ui.updatePoints(this.currentPoints);
     }
 
     animate(time) {
@@ -148,24 +157,24 @@ checkBinary(userBinary) {
             this.lastUpdateTime = time;
         }
         this.renderer.render(this.scene, this.camera.getCamera());
+        this.clearDisplay();
     }
     
 
     addTailSegment(type) {
         let texturePath, baseColor;
     
-        if (type === 0) {
-            texturePath = "/assets/0.png";
-            baseColor = 0x000000;
-        } else if (type === 1) {
-            texturePath = "/assets/1.png";
-            baseColor = 0xffffff;
-        } else {
-            texturePath = "/assets/blank.png";
-            baseColor = 0x808080;
+        if (this.grid.isAlternateTheme) { // 🔥 Hell Mode
+            texturePath = type === 0 ? "/assets/ben_0.png" :
+                          type === 1 ? "/assets/ben_1.png" :
+                                       "/assets/blank.png";
+            baseColor = type === 0 ? 0xfc3705 : type === 1 ? 0x5c1605 : 0x808080;
+        } else { // 🔵 Normal Mode
+            texturePath = type === 0 ? "/assets/0.png" :
+                          type === 1 ? "/assets/1.png" :
+                                       "/assets/blank.png";
+            baseColor = type === 0 ? 0x000000 : type === 1 ? 0xffffff : 0x808080;
         }
-
-        this.ui.updateSegments(this.snakeList);
     
         const newTailSegment = new Tail(texturePath, baseColor);
         const referenceBall = this.tailSegments.length > 0 
@@ -195,7 +204,6 @@ checkBinary(userBinary) {
     clearTail() {
         while (this.tailSegments.length > 0) {
             this.removeLastSegment();
-            this.ui.updateSegments(this.snakeList);
         }
     }
 
@@ -220,7 +228,7 @@ checkBinary(userBinary) {
             
                 this.snakeList.push(cube.value);
                 this.addTailSegment(cube.value);
-                this.end();
+                
             
 
                 // Remove the cube from the group and scene
@@ -236,6 +244,7 @@ checkBinary(userBinary) {
         // If the snake is at (0,0), allow movement again
         if (this.head.onHomeSquare) {
             console.log("🏡 Leaving home, movement allowed again!");
+            this.active = true
             this.head.ye = false;
         }
     
@@ -255,7 +264,18 @@ checkBinary(userBinary) {
         } else if (key === 'arrowright' || key === 'd') {
             this.head.setDirection(1, 0);
         }
+
+        if (key === 'x') {
+            this.isAlternateTheme = !this.isAlternateTheme;
+            this.grid.toggleGridColors(this.isAlternateTheme)
+            this.ui.updateFavicon(this.isAlternateTheme)
+            this.ui.updateSegments(this.snakeList, this.isAlternateTheme);
+        }
         
+    }
+
+    clearDisplay() {
+        this.ui.updateSegments(this.snakeList, this.isAlternateTheme);
     }
     
     start() {
@@ -266,7 +286,15 @@ checkBinary(userBinary) {
     }
     
     end(){
+        if (this.active) {
+            this.clearLevel()
+            this.generateLevel()
+        }
+        // change active to false
         this.active = false
         console.log("game end")
+        // manage points
+        
+        
     }
 }

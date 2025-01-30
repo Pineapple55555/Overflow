@@ -111,15 +111,16 @@ export class Snake extends EventTarget{
         this.tailSize = 0
     }
 
-    this.resetGame();
+    this.resetSnake();
+
 }
   
   // Example reset game function
-  resetGame() {
+  resetSnake() {
       // Reset game state (adjust according to your game logic)
       this.ball.position.set(0, 0, 0); // Reset ball position
       this.previousPositions = []; // Clear previous positions
       this.direction.set(0, 0); // Reset direction
-      console.log("Game reset!");
+      console.log("Snake reset!");
   }
   }

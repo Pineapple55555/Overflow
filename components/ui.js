@@ -33,23 +33,25 @@ export class Ui {
         }
     }
 
-    async updateSegments(snakeList) {
+    async updateSegments(snakeList, isAlternateTheme = false) {
         const segmentsElement = document.getElementById('segments');
     
         // Convert array to a string (e.g., [1, 0, 1] → "101")
         let segmentsString = snakeList.join('');
     
         // ✅ Ensure it is always 8 characters by padding "0"s at the front
-        let paddedZeros = '0'.repeat(8 - segmentsString.length);
-        
-        // ✅ Wrap padded 0s in a red `<span>`
-        let formattedString = `<span style="color:rgb(120, 134, 150);">${paddedZeros}</span>${segmentsString}`;
+        let paddingLength = Math.max(0, 8 - segmentsString.length);
+        let paddedZeros = '0'.repeat(paddingLength);
     
-        // Update the UI with styled HTML
+        // 🔥 Hell Mode: Change padded `0`s to Crimson, else use Default Grayish Blue
+        let zeroColor = isAlternateTheme ? "#8f1e01" : "#636f7d";
+    
+        // ✅ Wrap padded 0s in a styled span
+        let formattedString = `<span style="color: ${zeroColor};">${paddedZeros}</span>${segmentsString}`;
+    
+        // Update the UI
         segmentsElement.innerHTML = formattedString;
     }
-    
-    
     
 
   
@@ -77,4 +79,36 @@ export class Ui {
         targetNumberElement.textContent = 'Points:' + String(currentPoints);
 
         }
+        updateFavicon(isAlternateTheme) {
+            const favicon = document.querySelector("link[rel='icon']");
+        
+            if (!favicon) {
+                console.error("❌ Favicon element not found!");
+                return;
+            }
+        
+            // ✅ Update the favicon
+            favicon.href = isAlternateTheme ? "/assets/favicon_alternate.png" : "/assets/favicon_default.png";
+        
+            document.title = isAlternateTheme ? "Gernoverflow" : "Overflow";
+
+            const body = document.body;
+            const targetNumberElement = document.getElementById("target-number");
+            const pointsElement = document.getElementById("points");
+            const segmentsElement = document.getElementById("segments");
+        
+            if (isAlternateTheme) {
+                // 🔥 Hell Mode: Crimson Text
+                body.style.color = "#fc3705"; // Main text color
+                if (targetNumberElement) targetNumberElement.style.color = "#fea993";
+                if (pointsElement) pointsElement.style.color = "#fd6a44";
+                if (segmentsElement) segmentsElement.style.color = "#fd6a44";
+            } else {
+                // 🔵 Default Mode: Beige Text
+                body.style.color = "beige"; // Main text color
+                if (targetNumberElement) targetNumberElement.style.color = "beige";
+                if (pointsElement) pointsElement.style.color = "#c6defa";
+                if (segmentsElement) segmentsElement.style.color = "#c6defa";
+            }
     }
+}

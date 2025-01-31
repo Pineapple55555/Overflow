@@ -24,6 +24,18 @@
   color: beige;
   font-size: 34px;
 }
+.death-message-container {
+  box-sizing: border-box;
+  right: 50px;
+  top: 200px;
+  height: 80px;
+  width: auto;
+  position: absolute;
+  text-align: center;
+  font-size: 24px;
+  color: #c6defa; 
+}
+
 
 .points {
   box-sizing: border-box;
@@ -57,6 +69,9 @@
 <body>
   <div class="ui-container">
     <span id="target-number"> </span>
+  </div>
+  <div class="death-message-container">
+    <span id="death-message"></span>
   </div>
   <div class = "points">
     <span id = "points"> </span>

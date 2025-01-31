@@ -77,6 +77,7 @@ export class Game {
         });
         document.addEventListener("playerDied", (event) => {
             console.log("Resetting score due to death. Reason:", event.detail.reason);
+            this.ui.updateDeathMessage(event.detail.reason)
             this.currentPoints = 0;
             this.snakeList = []
             this.clearTail()
@@ -84,6 +85,10 @@ export class Game {
             this.ui.updatePoints(this.currentPoints);/////////
         });
         this.movementQueue = []; // Stores upcoming moves
+
+        // music setup
+        this.audio = new Audio('/assets/theme_tune.mp3');  // Specify the path to your MP3 file
+        this.audio.loop = true;
 
     }
     clearLevel(){
@@ -151,10 +156,27 @@ export class Game {
         this.end();
     }
 
+    playAudio() {
+        this.audio.currentTime = 0;  // Ensure the audio starts from the beginning
+        this.audio.volume = 0.2;
+        this.audio.play()
+            .then(() => {
+                console.log("Audio is playing");
+            })
+            .catch((error) => {
+                console.error("Error playing the audio:", error);
+            });
+    }
+    stopAudio() {
+        this.audio.pause();  // Stop the audio
+        this.audio.currentTime = 0;  // Reset the audio position
+    }
+
 
     pointsManager(points) {
         //adds points and updates anything that needs updating
         console.log("adds points");
+        this.ui.updateDeathMessage("Gained ten points")
         this.currentPoints += points
         this.ui.updateTargetNumber();
         this.ui.updatePoints(this.currentPoints);
@@ -324,6 +346,7 @@ export class Game {
         console.log("Starting game...");
         this.animate(0);
         this.active = true
+        this.playAudio()
     }
     
     end(){

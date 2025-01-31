@@ -21,7 +21,6 @@ export class Game {
         this.lastUpdateTime = 0;
         this.isAlternateTheme = false;
         this.currentPoints = 0
-        this.basePoints = 10
         
         // Set up camera and grid
         this.camera = new Camera(window.innerWidth, window.innerHeight);
@@ -79,9 +78,12 @@ export class Game {
         document.addEventListener("playerDied", (event) => {
             console.log("Resetting score due to death. Reason:", event.detail.reason);
             this.currentPoints = 0;
+            console.log("reset first" + this.snakeList.length)
             this.ui.updateTargetNumber();
-            this.ui.updatePoints(this.currentPoints);
+            this.ui.updatePoints(this.currentPoints);/////////
+            console.log(this.snakeList.length)
         });
+        this.movementQueue = []; // Stores upcoming moves
 
     }
     clearLevel(){
@@ -130,29 +132,44 @@ export class Game {
         if (paddedUserBinary.length === targetBinary.length &&
             paddedUserBinary.split('').every((bit, index) => bit === targetBinary[index])) {
             console.log("✅ Binary match!");
-            this.pointsManager()
+            this.pointsManager(10)
+            const scoreSound = new Audio('/assets/score.mp3');
+            scoreSound.play();
             this.end();
         } else {
             console.log("❌ Binary mismatch.");
+            if (this.currentPoints > 0) {
+                this.pointsManager(-5)
+            }
+            console.log("sound first" + this.snakeList.length)
+            if (this.snakeList.length > 0) {
+            const incorrectSound = new Audio('/assets/incorrect.mp3');
+            incorrectSound.play();
+            }
+        
         }
         this.end();
     }
 
 
-    pointsManager() {
+    pointsManager(points) {
         //adds points and updates anything that needs updating
         console.log("adds points");
-        this.currentPoints += this.basePoints
+        this.currentPoints += points
         this.ui.updateTargetNumber();
         this.ui.updatePoints(this.currentPoints);
     }
 
     animate(time) {
-    
         requestAnimationFrame((t) => this.animate(t));
-        //this.environmentHandler.animate()
     
         if (time - this.lastUpdateTime > 200) {
+            // Apply the next valid direction if queued
+            if (this.movementQueue.length > 0) {
+                const nextMove = this.movementQueue.shift(); // Get the next move
+                this.head.setDirection(nextMove.x, nextMove.y);
+            }
+    
             const headPosition = this.head.getBall().position.clone();
             this.head.move(this.gridSize, this.gridStep);
             this.positionQueue.push(headPosition);
@@ -165,18 +182,21 @@ export class Game {
                     segment.update(this.positionQueue[index]);
                 }
             });
+    
             this.pickupChecker();
             this.lastUpdateTime = time;
         }
+    
         this.renderer.render(this.scene, this.camera.getCamera());
         this.clearDisplay();
     }
+    
     
 
     addTailSegment(type) {
         let texturePath, baseColor;
     
-        if (this.grid.isAlternateTheme) { // 🔥 Hell Mode
+        if (this.isAlternateTheme) { // 🔥 Hell Mode
             texturePath = type === 0 ? "/assets/ben_0.png" :
                           type === 1 ? "/assets/ben_1.png" :
                                        "/assets/blank.png";
@@ -253,39 +273,50 @@ export class Game {
     handleInput(event) {
         const key = event.key.toLowerCase();
     
-        // If the snake is at (0,0), allow movement again
         if (this.head.onHomeSquare) {
             console.log("🏡 Leaving home, movement allowed again!");
-            this.active = true
+            this.active = true;
             this.head.ye = false;
         }
     
-        // Prevent reversing direction
-        if ((key === 'arrowup' || key === 'w') && this.head.direction.y === 1) return;
-        if ((key === 'arrowdown' || key === 's') && this.head.direction.y === -1) return;
-        if ((key === 'arrowleft' || key === 'a') && this.head.direction.x === 1) return;
-        if ((key === 'arrowright' || key === 'd') && this.head.direction.x === -1) return;
-    
-        // Movement logic
-        if (key === 'arrowup' || key === 'w') {
-            this.head.setDirection(0, -1);
-        } else if (key === 'arrowdown' || key === 's') {
-            this.head.setDirection(0, 1);
-        } else if (key === 'arrowleft' || key === 'a') {
-            this.head.setDirection(-1, 0);
-        } else if (key === 'arrowright' || key === 'd') {
-            this.head.setDirection(1, 0);
-        }
-
         if (key === 'x') {
+            console.log("hell mode")
             this.isAlternateTheme = !this.isAlternateTheme;
-            this.grid.toggleGridColors(this.isAlternateTheme)
-            this.ui.updateFavicon(this.isAlternateTheme)
-            this.ui.updateSegments(this.snakeList, this.isAlternateTheme)
-            this.head.updateHeadAppearance(this.isAlternateTheme)
+            this.grid.toggleGridColors(this.isAlternateTheme);
+            this.ui.updateFavicon(this.isAlternateTheme);
+            this.ui.updateSegments(this.snakeList, this.isAlternateTheme);
+            this.head.updateHeadAppearance(this.isAlternateTheme);
+        }
+        const lastX = this.head.direction.x;
+        const lastY = this.head.direction.y;
+    
+        let nextX = lastX;
+        let nextY = lastY;
+    
+        // Determine next direction based on key press
+        if ((key === 'arrowup' || key === 'w') && lastY === 0) {
+            nextX = 0;
+            nextY = -1;
+        } else if ((key === 'arrowdown' || key === 's') && lastY === 0) {
+            nextX = 0;
+            nextY = 1;
+        } else if ((key === 'arrowleft' || key === 'a') && lastX === 0) {
+            nextX = -1;
+            nextY = 0;
+        } else if ((key === 'arrowright' || key === 'd') && lastX === 0) {
+            nextX = 1;
+            nextY = 0;
+        } else {
+            return; // Ignore invalid inputs
         }
         
+        console.log("hellllllll pls")
+        // Push to movement queue (max 2 moves to prevent excessive buffering)
+        if (this.movementQueue.length < 2) {
+            this.movementQueue.push({ x: nextX, y: nextY });
+        }
     }
+    
 
     clearDisplay() {
         this.ui.updateSegments(this.snakeList, this.isAlternateTheme);

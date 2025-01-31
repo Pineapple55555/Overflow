@@ -113,6 +113,9 @@ export class Snake extends EventTarget{
 
     this.resetSnake();
 
+    const deathSound = new Audio('/assets/death.mp3');
+    deathSound.play();
+
     // event to reset points
     const event = new CustomEvent("playerDied", { detail: { reason } });
     document.dispatchEvent(event);

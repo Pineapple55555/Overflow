@@ -25,7 +25,7 @@ export class Ui {
         // Check if binaryRepresentation is valid
         if (binaryRepresentation) {
         // Update the UI with the random number and binary representation
-            targetNumberElement.textContent = 'Target: ' + randomNumber + ' Binary: ' + binaryRepresentation.value;
+            targetNumberElement.textContent = 'Target: ' + randomNumber;
             this.currentBinary = binaryRepresentation.value
         } else {
         // If binary representation is not found

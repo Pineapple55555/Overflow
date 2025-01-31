@@ -69,7 +69,7 @@ export class Snake extends EventTarget{
     
         // ✅ Check for self-collision after moving
         if (this.isCollidingWithItself(this.ball.position.x, this.ball.position.z)) {
-            this.death("collided with tail");
+            this.death("collided with itself");
             return;
         }
     
@@ -113,14 +113,12 @@ export class Snake extends EventTarget{
 
     this.resetSnake();
 
-    // event to reset points
-    const event = new CustomEvent("playerDied", { detail: { reason } });
-    document.dispatchEvent(event);
-
     const deathSound = new Audio('/assets/death.mp3');
     deathSound.play();
 
-    
+    // event to reset points
+    const event = new CustomEvent("playerDied", { detail: { reason } });
+    document.dispatchEvent(event);
 
 }
   

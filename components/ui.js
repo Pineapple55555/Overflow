@@ -33,18 +33,6 @@ export class Ui {
         }
     }
 
-    async updateDeathMessage(deathMessage) {
-        console.log("death msg");
-        const thingy = document.getElementById('death-message');
-        thingy.textContent = deathMessage;
-    
-        // Reset the message after 3 seconds
-        setTimeout(() => {
-            thingy.textContent = "";
-        }, 3000);
-    }
-    
-
     async updateSegments(snakeList, isAlternateTheme = false) {
         const segmentsElement = document.getElementById('segments');
     

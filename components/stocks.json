@@ -1,0 +1,73 @@
+[
+    {
+      "symbol": "BTC",
+      "name": "Bitcoin",
+      "price_usd": 43251.25,
+      "market_cap": 820134567890,
+      "volume_24h": 31234567890
+    },
+    {
+      "symbol": "ETH",
+      "name": "Ethereum",
+      "price_usd": 3125.67,
+      "market_cap": 375123456789,
+      "volume_24h": 21234567890
+    },
+    {
+      "symbol": "ADA",
+      "name": "Cardano",
+      "price_usd": 1.21,
+      "market_cap": 40123456789,
+      "volume_24h": 1234567890
+    },
+    {
+      "symbol": "XRP",
+      "name": "Ripple",
+      "price_usd": 0.62,
+      "market_cap": 30234567890,
+      "volume_24h": 1134567890
+    },
+    {
+      "symbol": "DOGE",
+      "name": "Dogecoin",
+      "price_usd": 0.089,
+      "market_cap": 12345678901,
+      "volume_24h": 534567890
+    },
+    {
+      "symbol": "SOL",
+      "name": "Solana",
+      "price_usd": 148.99,
+      "market_cap": 72890123456,
+      "volume_24h": 4234567890
+    },
+    {
+      "symbol": "DOT",
+      "name": "Polkadot",
+      "price_usd": 6.32,
+      "market_cap": 18901234567,
+      "volume_24h": 1236789012
+    },
+    {
+      "symbol": "MATIC",
+      "name": "Polygon",
+      "price_usd": 1.02,
+      "market_cap": 8934567890,
+      "volume_24h": 934567890
+    },
+    {
+      "symbol": "LTC",
+      "name": "Litecoin",
+      "price_usd": 72.89,
+      "market_cap": 5434567890,
+      "volume_24h": 678901234
+    },
+    {
+      "symbol": "BNB",
+      "name": "Binance Coin",
+      "price_usd": 312.45,
+      "market_cap": 49567890123,
+      "volume_24h": 3456789012
+    }
+]
+  

@@ -4,29 +4,44 @@ export class Head extends Snake {
     constructor(game) {
         super(0.5);
         this.game = game;
+        this.textureLoader = new THREE.TextureLoader();
+        this.isHellMode = false; // Track current mode
 
-        const textureLoader = new THREE.TextureLoader();
-        textureLoader.load(
-            '/assets/head.png',
+        this.ball.material = new THREE.MeshBasicMaterial({
+            color: 0xFFFFFF, // ✅ Ensure no tinting
+            transparent: true,
+        });
+
+        this.loadTexture('/assets/head.png'); // Load default texture
+        this.ball.rotation.x = Math.PI / 2;
+    }
+
+    // ✅ Function to load a texture dynamically
+    loadTexture(texturePath) {
+        this.textureLoader.load(
+            texturePath,
             (texture) => {
                 texture.magFilter = THREE.NearestFilter;
                 texture.minFilter = THREE.NearestFilter;
 
-                this.ball.material = new THREE.MeshBasicMaterial({
-                    map: texture,
-                    transparent: true, // Support transparency
-                });
-
+                this.ball.material.map = texture;
+                this.ball.material.color.set(0xFFFFFF); // ✅ Ensure no tinting
                 this.ball.material.needsUpdate = true;
             },
             undefined,
             () => {
-                console.error("Failed to load head texture!");
+                console.error(`❌ Failed to load texture: ${texturePath}`);
             }
         );
+    }
 
-        // Align the sphere's front texture with the Z-axis
-        this.ball.rotation.x = Math.PI / 2; // Rotate 90 degrees to align texture properly
+    // ✅ Function to toggle head appearance
+    updateHeadAppearance(isAlternateTheme) {
+        this.isHellMode = isAlternateTheme;
+        const newTexture = isAlternateTheme ? "/assets/gernot.png" : "/assets/head.png";
+        console.log(newTexture)
+        this.loadTexture(newTexture);
+        console.log(`🐍 Head texture changed to ${isAlternateTheme ? "🔥 Hell Mode" : "🔵 Normal Mode"}`);
     }
 
     move(gridSize, gridStep) {

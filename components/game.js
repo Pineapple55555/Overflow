@@ -77,13 +77,21 @@ export class Game {
         });
         document.addEventListener("playerDied", (event) => {
             console.log("Resetting score due to death. Reason:", event.detail.reason);
+            this.ui.updateDeathMessage(event.detail.reason);
             this.currentPoints = 0;
-            this.snakeList = []
-            this.clearTail()
+            this.snakeList = [];
+            this.clearTail();
+            this.positionQueue = []; // 🚨 Explicitly clear position queue
+            this.head.getBall().position.set(0, 0.3, 0); // 🚨 Reset head position
             this.ui.updateTargetNumber();
-            this.ui.updatePoints(this.currentPoints);/////////
+            this.ui.updatePoints(this.currentPoints);
         });
+        
         this.movementQueue = []; // Stores upcoming moves
+
+        // music setup
+        this.audio = new Audio('/assets/theme_tune.mp3');  // Specify the path to your MP3 file
+        this.audio.loop = true;
 
     }
     clearLevel(){
@@ -151,10 +159,27 @@ export class Game {
         this.end();
     }
 
+    playAudio() {
+        this.audio.currentTime = 0;  // Ensure the audio starts from the beginning
+        this.audio.volume = 0.2;
+        this.audio.play()
+            .then(() => {
+                console.log("Audio is playing");
+            })
+            .catch((error) => {
+                console.error("Error playing the audio:", error);
+            });
+    }
+    stopAudio() {
+        this.audio.pause();  // Stop the audio
+        this.audio.currentTime = 0;  // Reset the audio position
+    }
+
 
     pointsManager(points) {
         //adds points and updates anything that needs updating
         console.log("adds points");
+        this.ui.updateDeathMessage("Gained ten points")
         this.currentPoints += points
         this.ui.updateTargetNumber();
         this.ui.updatePoints(this.currentPoints);
@@ -223,22 +248,43 @@ export class Game {
 
     removeLastSegment() {
         if (this.tailSegments.length > 0) {
-            const segmentToRemove = this.tailSegments.shift(); // Removes the first segment
+            const segmentToRemove = this.tailSegments.shift(); // Remove first tail segment
+            console.log("Removing tail segment:", segmentToRemove.getBall().position);
+            console.log("Tail segments before:", this.tailSegments.length + 1);
+    
             this.scene.remove(segmentToRemove.getBall());
-
+    
             // Remove the first element in the position queue, if it exists
             if (this.positionQueue.length > 0) {
                 this.positionQueue.shift();
             }
+    
+            console.log("Tail segments after:", this.tailSegments.length);
         }
     }
+    
 
     clearTail() {
+        console.log("Before clearing:", this.tailSegments.length, "segments"); 
+    
         while (this.tailSegments.length > 0) {
-            this.removeLastSegment();
+            let segmentToRemove = this.tailSegments.pop();
+            console.log("Removing tail segment:", segmentToRemove.getBall().position);
+            this.scene.remove(segmentToRemove.getBall()); 
         }
-    }
+    
+        // 🚨 Reset position queue to prevent invisible collision
+        console.log("Before clearing positionQueue:", this.positionQueue);
+        this.positionQueue = [];
+        console.log("After clearing positionQueue:", this.positionQueue);
 
+    
+        console.log("After clearing:", this.tailSegments.length, "segments");
+    }
+    
+    
+    
+    
     pickupChecker() {
         if (!this.binaryGroup) {
             console.warn("binaryGroup is not initialized yet.");
@@ -324,6 +370,7 @@ export class Game {
         console.log("Starting game...");
         this.animate(0);
         this.active = true
+        this.playAudio()
     }
     
     end(){

@@ -2,17 +2,75 @@
 <html lang="en">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
 <head>
+  <link id="favicon" rel="icon" type="image/png" href="/assets/favicon_default.png">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
   <title>Overflow</title>
   <style>
     body {
-      margin: 0;
-      overflow: hidden;
-    }
+  margin: 0;
+  overflow: hidden;
+  font-family: 'Press Start 2P', cursive; /* Apply globally */
+}
+
+.ui-container {
+  height: 7%;
+  width: 100%;
+  position: absolute;
+  top: 25px;
+  box-sizing: border-box;
+  text-align: center;
+  color: beige;
+  font-size: 34px;
+}
+
+.points {
+  box-sizing: border-box;
+  bottom: 20px;
+  right: 50px;
+  height: 80px;
+  width: auto;
+  position: absolute;
+  text-align: center;
+  font-size: 24px;
+  color: #c6defa; 
+
+}
+
+.segments {
+  box-sizing: border-box;
+  bottom: 20px;
+  left: 50px;
+  height: 80px;
+  width: auto;
+  position: absolute;
+  text-align: center;
+  font-size: 24px;
+  color: #c6defa;
+}
+
+
+
   </style>
 </head>
 <body>
+  <div class="ui-container">
+    <span id="target-number"> </span>
+  </div>
+  <div class = "points">
+    <span id = "points"> </span>
+  </div>
+  <div class="segments">
+    <span id="segments">00000000</span>
+  </div>
+  </style>
+</head>
+  </style>
+</head>
   <script type="module" src="script.js"></script>
+  <script type="importmap">
+    { "imports": { "three": "https://unpkg.com/three@latest/build/three.module.js" } }
+  </script>
 </body>
 </html>

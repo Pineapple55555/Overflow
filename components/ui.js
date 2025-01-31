@@ -2,6 +2,7 @@ export class Ui {
     constructor() {
         // 8 bit binary
         this.currentBinary = null
+        this.deathMessage = document.getElementById('death-message');
     }
 
 // Function to generate a random number between 1 and 100
@@ -31,6 +32,15 @@ export class Ui {
         // If binary representation is not found
             targetNumberElement.textContent = 'Number: ' + randomNumber + ' Binary: Not found';
         }
+    }
+    async updateDeathMessage(deathMessage) {
+        console.log("death msg")
+        const thingy = document.getElementById('death-message');
+        thingy.textContent = deathMessage
+        // Reset the message after 3 seconds
+        setTimeout(() => {
+            thingy.textContent = "";
+        }, 3000);
     }
 
     async updateSegments(snakeList, isAlternateTheme = false) {

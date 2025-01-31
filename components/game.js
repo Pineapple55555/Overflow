@@ -33,6 +33,7 @@ export class Game {
         this.snakeList = [];
         this.currentBinary = null
         this.defaultStockData = { price_usd: 0.002312, market_cap: 1234567 };
+        
 
         //env setup
         //this.environmentHandler = new Environment(this.scene, this.renderer, this.camera)
@@ -77,6 +78,7 @@ export class Game {
         });
         document.addEventListener("playerDied", (event) => {
             console.log("Resetting score due to death. Reason:", event.detail.reason);
+            this.ui.updateDeathMessage(event.detail.reason)
             this.currentPoints = 0;
             console.log("reset first" + this.snakeList.length)
             this.ui.updateTargetNumber();
@@ -154,6 +156,7 @@ export class Game {
 
     pointsManager(points) {
         //adds points and updates anything that needs updating
+        this.ui.updateDeathMessage("Gained ten points")
         console.log("adds points");
         this.currentPoints += points
         this.ui.updateTargetNumber();

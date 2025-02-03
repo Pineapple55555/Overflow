@@ -22,3 +22,8 @@ Overflow is a modern twist on the classic Snake game. Built using **Three.js**, 
 4. Be careful! If you collect more than 8 bits, you will overflow and lose the game.
 5. Continue playing and scoring as many points as possible!
 
+## Contributors
+- Pineapple55555
+- AmmeJane
+- arelk68
+- alenochkako

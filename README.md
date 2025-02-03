@@ -1,7 +1,7 @@
 # Overflow - Hackathon Project (January 2025)
 
 ## Overview
-Overflow is a modern twist on the classic Snake game. Built using **Three.js**, it renders a 3D environment where the snake collects `1`s and `0`s to form the correct 8-bit binary representation of a decimal number prompted at the top of the screen. Once the 8-bit value is complete, the player must return to the center of the arena to score points. If the player collects more than 8 bits, they overflow and lose the game!
+Overflow is a modern twist on the classic Snake game. Built using **Three.js**, it renders a 3D environment where the snake collects `1`s and `0`s to form the correct 8-bit binary representation of a decimal number prompted at the top of the screen. Once the 8-bit value is complete, the player must return to the centre of the arena to score points. If the player collects more than 8 bits, they overflow and lose the game!
 
 ## Features
 - **3D Gameplay with Three.js:** A unique take on the classic Snake game in a 3D environment powered by Three.js.

@@ -45,6 +45,7 @@ export class Snake extends EventTarget{
                     this.dispatchEvent(new CustomEvent("homeCollision"));
                     this.game.clearTail();  // Reset the tail
                     this.tailSize = 0;
+                    this.previousPositions = []; // Remove collision objects
                 }
                 this.direction.set(0, 0);  // Stop movement
             }

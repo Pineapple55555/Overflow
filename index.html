@@ -1,90 +1,187 @@
 <!DOCTYPE html>
 <html lang="en">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 <head>
-  <link id="favicon" rel="icon" type="image/png" href="/assets/favicon_default.png">
+  <link id="favicon" rel="icon" type="image/png" href="./assets/favicon_default.png">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
   <title>Overflow</title>
   <style>
     body {
-  margin: 0;
-  overflow: hidden;
-  font-family: 'Press Start 2P', cursive; /* Apply globally */
-}
+      margin: 0;
+      overflow: hidden;
+      font-family: 'Press Start 2P', cursive;
+      background-color: #121212;
+      color: #ffffff;
+    }
 
-.ui-container {
-  height: 7%;
-  width: 100%;
-  position: absolute;
-  top: 25px;
-  box-sizing: border-box;
-  text-align: center;
-  color: beige;
-  font-size: 34px;
-}
-.death-message-container {
-  box-sizing: border-box;
-  position: absolute;
-  top: 75px;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  text-align: center;
-  font-size: 18px;
-  color: #c6defa;
-  width: auto;
-  height: auto;
-}
+    .ui-container {
+      height: 7%;
+      width: 100%;
+      position: absolute;
+      top: 25px;
+      box-sizing: border-box;
+      text-align: center;
+      color: beige;
+      font-size: 34px;
+    }
 
+    .death-message-container {
+      box-sizing: border-box;
+      position: absolute;
+      top: 75px;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      font-size: 18px;
+      color: #c6defa;
+      width: auto;
+      height: auto;
+    }
 
-.points {
-  box-sizing: border-box;
-  bottom: 20px;
-  right: 50px;
-  height: 80px;
-  width: auto;
-  position: absolute;
-  text-align: center;
-  font-size: 24px;
-  color: #c6defa; 
+    .points {
+      box-sizing: border-box;
+      bottom: 20px;
+      right: 50px;
+      height: 80px;
+      width: auto;
+      position: absolute;
+      text-align: center;
+      font-size: 24px;
+      color: #c6defa;
+    }
 
-}
+    .segments {
+      box-sizing: border-box;
+      bottom: 20px;
+      left: 50px;
+      height: 80px;
+      width: auto;
+      position: absolute;
+      text-align: center;
+      font-size: 24px;
+      color: #c6defa;
+    }
 
-.segments {
-  box-sizing: border-box;
-  bottom: 20px;
-  left: 50px;
-  height: 80px;
-  width: auto;
-  position: absolute;
-  text-align: center;
-  font-size: 24px;
-  color: #c6defa;
-}
+    .readme-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.95);
+      color: white;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      text-align: center;
+      z-index: 1000; /* Keep readme container above content but below buttons */
+    }
 
+    .readme-content {
+      background: #1e1e1e;
+      color: #ffffff;
+      padding: 20px;
+      border-radius: 10px;
+      max-width: 80%;
+      max-height: 60%;
+      overflow-y: auto;
+      text-align: left;
+      font-family: Arial, sans-serif;
+    }
 
+    .start-button {
+      margin-top: 20px;
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+      background-color: #28a745;
+      color: white;
+      border: none;
+      border-radius: 5px;
+    }
 
+    /* New styles for Back, GitHub, and README buttons */
+    .top-left-buttons {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      display: flex;
+      gap: 10px;
+      z-index: 9999; /* Ensure the buttons are above other content */
+    }
+
+    .top-left-buttons button {
+      padding: 10px 20px;
+      background-color: #333;
+      color: white;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      cursor: pointer;
+      font-family: 'Press Start 2P', cursive;
+      z-index: 9999; /* Ensure button clicks are active */
+    }
+
+    .top-left-buttons button:hover {
+      background-color: #555;
+    }
   </style>
 </head>
 <body>
+  <!-- Buttons for GitHub and README -->
+  <div class="top-left-buttons">
+    <button onclick="openGitHub()">GitHub</button>
+    <button onclick="loadReadme()">README.md</button>
+  </div>
+
+  <div class="readme-container" id="readme-container">
+    <div class="readme-content">
+      <h1>README.md</h1>
+      <div id="readme-content">Loading...</div>
+      <button class="start-button" onclick="startGame()">Start Game</button>
+    </div>
+  </div>
+
   <div class="ui-container">
     <span id="target-number"> </span>
   </div>
   <div class="death-message-container">
     <span id="death-message"></span>
   </div>
-  <div class = "points">
-    <span id = "points"> </span>
+  <div class="points">
+    <span id="points"> </span>
   </div>
   <div class="segments">
     <span id="segments">00000000</span>
   </div>
-  </style>
-</head>
-  </style>
-</head>
-  <script type="module" src="script.js"></script>
+
+  <script>
+    async function loadReadme() {
+      const response = await fetch('README.md');
+      const text = await response.text();
+      document.getElementById('readme-content').innerHTML = marked.parse(text);
+      document.getElementById('readme-container').style.display = 'flex';
+    }
+
+    function startGame() {
+      document.getElementById('readme-container').style.display = 'none';
+      import('./script.js').then(module => {
+        // Game starts here
+      });
+    }
+
+    // Function to open GitHub page
+    function openGitHub() {
+      window.open('https://github.com/Pineapple55555/Overflow', '_blank');
+    }
+
+    window.onload = loadReadme;
+  </script>
+
   <script type="importmap">
     { "imports": { "three": "https://unpkg.com/three@latest/build/three.module.js" } }
   </script>

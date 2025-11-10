@@ -123,4 +123,58 @@ export class Ui {
                 if (segmentsElement) segmentsElement.style.color = "#c6defa";
             }
     }
+    
+    startBinaryBackground() {
+    // Create or find the background container
+    let background = document.getElementById("binary-background");
+    if (!background) {
+        background = document.createElement("div");
+        background.id = "binary-background";
+        document.body.appendChild(background);
+    }
+
+    // Apply initial styling
+    Object.assign(background.style, {
+        position: "fixed",
+        top: "0",
+        left: "0",
+        width: "100%",
+        height: "100%",
+        color: "#07db00ff",
+        fontFamily: "monospace",
+        fontSize: "14px",
+        whiteSpace: "pre",
+        lineHeight: "1em",
+        zIndex: "0",                
+        opacity: "0.25",            
+        backgroundColor: "transparent", 
+        pointerEvents: "none",      
+        userSelect: "none",
+        overflow: "hidden",
+    });
+
+
+    const generateBinaryGrid = () => {
+        const width = Math.floor(window.innerWidth / 5);
+        const height = Math.floor(window.innerHeight / 8);
+        let binaryText = "";
+
+        for (let y = 0; y < height; y++) {
+            for (let x = 0; x < width; x++) {
+                binaryText += Math.random() > 0.5 ? "1" : "0";
+            }
+            binaryText += "\n";
+        }
+        background.textContent = binaryText;
+    };
+
+    // Generate immediately, then every 500ms
+    generateBinaryGrid();
+    this._binaryInterval = setInterval(generateBinaryGrid, 250);
+}
+
+stopBinaryBackground() {
+    if (this._binaryInterval) clearInterval(this._binaryInterval);
+}
+
 }

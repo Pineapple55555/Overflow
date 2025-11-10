@@ -14,7 +14,8 @@ export class Game {
 
     constructor() {
         this.scene = new THREE.Scene();
-        this.renderer = new THREE.WebGLRenderer();
+        this.renderer = new THREE.WebGLRenderer({ alpha: true });
+        this.renderer.setClearColor(0x000000, 0); // transparent background
         this.gridSize = 17;
         this.squareSize = 1;
         this.gridStep = 1;
@@ -22,12 +23,16 @@ export class Game {
         this.isAlternateTheme = false;
         this.currentPoints = 0
         
+        
         // Set up camera and grid
         this.camera = new Camera(window.innerWidth, window.innerHeight);
         this.grid = new Grid(this.gridSize, this.squareSize);
         this.ui = new Ui()
         this.ui.updateTargetNumber();
         this.ui.updatePoints(this.currentPoints);
+        console.log("Starting binary background...");
+        this.ui.startBinaryBackground();
+
         this.tailSegments = [];
         this.positionQueue = [];
         this.snakeList = [];
@@ -52,6 +57,9 @@ export class Game {
         // Set up renderer
         this.renderer.setSize(window.innerWidth, window.innerHeight);
         document.body.appendChild(this.renderer.domElement);
+        this.renderer.domElement.style.position = "relative";
+        this.renderer.domElement.style.zIndex = "1";
+
 
         // window listener
         /*
